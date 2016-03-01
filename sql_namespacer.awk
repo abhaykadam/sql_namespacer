@@ -1,13 +1,13 @@
 #!/usr/bin/awk -f
 BEGIN {
 	/* patterns */
-	TABLE_STRUCTURE = "-- Table structure for table `(.*)`"
-	DROP_TABLE = "DROP TABLE IF EXISTS `(.*)`"
-	CREATE_TABLE = "CREATE TABLE `(.*)`"
-	DUMP_DATA = "-- Dumping data for table `(.*)`"
-	LOCK_TABLES = "LOCK TABLES `(.*)`"
-	INSERT_INTO = "INSERT INTO `(.*)`"
-	ALTER_TABLE = "ALTER TABLE `(.*)`"
+	TABLE_STRUCTURE = "^-- Table structure for table `(.*)`"
+	DROP_TABLE = "^DROP TABLE IF EXISTS `(.*)`"
+	CREATE_TABLE = "^CREATE TABLE `(.*)`"
+	DUMP_DATA = "^-- Dumping data for table `(.*)`"
+	LOCK_TABLES = "^LOCK TABLES `(.*)`"
+	INSERT_INTO = "^INSERT INTO `(.*)`"
+	ALTER_TABLE = "^/\\*!40000 ALTER TABLE `(.*)`"
 }
 $0 ~ TABLE_STRUCTURE {
 	print gensub(TABLE_STRUCTURE, "-- Table structure for table `" prefix "\\1`", "g", $0)
@@ -34,7 +34,7 @@ $0 ~ INSERT_INTO {
 	next
 }
 $0 ~ ALTER_TABLE {
-	print gensub(ALTER_TABLE, "ALTER TABLE `" prefix "\\1`", "g", $0)
+	print gensub(ALTER_TABLE, "/*!40000 ALTER TABLE `" prefix "\\1`", "g", $0)
 	next
 }
 {
